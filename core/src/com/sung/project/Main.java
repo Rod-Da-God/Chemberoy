@@ -168,9 +168,12 @@ public class Main extends ApplicationAdapter implements Screen {
 		bullet = new Rectangle();
 		bullet.height = 0.001f;
 		bullet.width = 0.001f;
+<<<<<<< HEAD
 		bullet.x = player.x;
 		bullet.y = player.y;
 
+=======
+>>>>>>> 1b1fcd0090e7f54e454c88a71593a79cfe8aa197
 
 	}
 
@@ -366,7 +369,12 @@ private final void attack(){
 			float touchX = vector3.x;
 			float touchY = vector3.y;
 			if ((touchX >= _attack.getX()) && touchX <= (_attack.getX() + _attack.getWidth()) && (touchY >= _attack.getY()) && touchY <= (_attack.getY() + _attack.getHeight())) {
+<<<<<<< HEAD
 
+=======
+				bullet.x = player.x;
+				bullet.y = player.y;
+>>>>>>> 1b1fcd0090e7f54e454c88a71593a79cfe8aa197
 				bullet.x += 200 * Gdx.graphics.getDeltaTime();
 
 				Sbatch.draw(Bull, bullet.x, bullet.y);
