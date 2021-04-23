@@ -59,12 +59,15 @@ public class Main extends ApplicationAdapter implements Screen {
 	Thread thread1;
 	Thread thread = new Thread();
 	Thread thread2 = new Thread();
+	Rectangle XY;
 
 
 
 	public  String playerHealth;
 	public int healthShip = 30;
 	public int healthNow = 1000;
+	public String anamyHealth;
+	public int anamyHealthNow = 10;
 	
 	@Override
 	public void create () {
@@ -152,6 +155,7 @@ public class Main extends ApplicationAdapter implements Screen {
 		_anamy.width = 95;
 		_anamy.height = 80;
 		playerHealth = String.valueOf(healthNow);
+		anamyHealth = String.valueOf(anamyHealthNow);
 
 
 		_attack = new Rectangle();
@@ -168,12 +172,11 @@ public class Main extends ApplicationAdapter implements Screen {
 		bullet = new Rectangle();
 		bullet.height = 0.001f;
 		bullet.width = 0.001f;
-<<<<<<< HEAD
-		bullet.x = player.x;
-		bullet.y = player.y;
 
-=======
->>>>>>> 1b1fcd0090e7f54e454c88a71593a79cfe8aa197
+		XY = new Rectangle();
+		XY.x = player.x;
+
+
 
 	}
 
@@ -198,9 +201,11 @@ public class Main extends ApplicationAdapter implements Screen {
 		Sbatch.draw(UpButton, up.x, up.y, up.width, up.height);
 		Sbatch.draw(_Attack, _attack.x, _attack.y, _attack.width, _attack.height);
 		scFont.draw(Sbatch, playerHealth, 50, 460);
+		scFont.draw(Sbatch, anamyHealth, 130, 460);
 		Sbatch.draw(Player, 15, 440, 40, 40);
+		Sbatch.draw(_Anamy,90,440,40,40);
 
-
+setLocation();
 		walkRightLeft();
 		upTouch();
 		anamyWalk();
@@ -253,10 +258,10 @@ public class Main extends ApplicationAdapter implements Screen {
 			player.y = 30 + (-grass.y * 2);
 		}
 
-		 if (player.x > 800 - 64){
+		/* if (player.x > 800 - 64){
 			player.x = 0;
 			player.y = grass.y - (grass.y * 2);
-		}
+		}*/
 		 if (player.y > 400){
 		 	player.y = 400;
 		 }
@@ -290,6 +295,7 @@ public class Main extends ApplicationAdapter implements Screen {
 if (_anamy.overlaps(player) ){
 	healthNow -=(0.1 - 0.01);
 	playerHealth = String.valueOf(healthNow);
+	player.x -= 2;
 	//MhitSound.play(0.02f);
 
 }
@@ -297,6 +303,14 @@ if (_anamy.overlaps(player) ){
 
 if (bullet.overlaps(_anamy)){
 	_anamy.setPosition(_anamy.x + 10,_anamy.y);
+	anamyHealthNow -=(0.1 - 0.01);
+	anamyHealth = String.valueOf(anamyHealthNow);
+	bullet.x = player.x+10;
+	bullet.y = player.y+ 10;
+	if (anamyHealthNow <= 0){
+		_anamy.x = 0;
+		_anamy.y = 1480;
+	}
 }
 
 
@@ -362,23 +376,105 @@ private 	void anamyWalk() {
 	}
 
 
-private final void attack(){
+ void attack(){
 
 			vector3.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			Ocamera.unproject(vector3);
 			float touchX = vector3.x;
 			float touchY = vector3.y;
 			if ((touchX >= _attack.getX()) && touchX <= (_attack.getX() + _attack.getWidth()) && (touchY >= _attack.getY()) && touchY <= (_attack.getY() + _attack.getHeight())) {
-<<<<<<< HEAD
 
-=======
-				bullet.x = player.x;
-				bullet.y = player.y;
->>>>>>> 1b1fcd0090e7f54e454c88a71593a79cfe8aa197
-				bullet.x += 200 * Gdx.graphics.getDeltaTime();
+
 
 				Sbatch.draw(Bull, bullet.x, bullet.y);
+				bullet.x = XY.x += 200 * Gdx.graphics.getDeltaTime();;
+				bullet.y = player.y;
+				//bullet.x += 200 * Gdx.graphics.getDeltaTime();
 
+			}
+		}
+		void setLocation() {
+			//сделать доп условие
+			if (anamyHealthNow <= 0) {
+
+
+				if (player.x > 800) {
+					grass.x = 0;
+					grass.y = 0;
+					grass.height = 0;
+					grass.width = 0;
+
+					player = new Rectangle();
+					player.x = 0;
+					player.y = 0;
+					player.height = 0;
+					player.width = 0;
+
+					right = new Rectangle();
+					right.x = 0;
+					right.y = 0;
+					right.height = 0;
+					right.width = 0;
+
+
+					left = new Rectangle();
+					left.x = 0;
+					left.y = 0;
+					left.height = 0;
+					left.width = 0;
+
+
+					up = new Rectangle();
+					up.x = 0;
+					up.y = 0;
+					up.height = 0;
+					up.width = 0;
+
+
+					ship = new Rectangle();
+					ship.x = 0;
+					ship.y = 0;
+					ship.width = 0;
+					ship.height = 0;
+
+
+					_anamy = new Rectangle();
+					_anamy.x = 0;
+					_anamy.y = 0;
+					_anamy.width = 0;
+					_anamy.height = 0;
+					playerHealth = String.valueOf(healthNow);
+
+
+					_attack = new Rectangle();
+					_attack.x = 0;
+					_attack.y = 0;
+					_attack.height = 0;
+					_attack.width = 0;
+
+
+					ban = new Rectangle();
+					ban.width = 0;
+					ban.height = 0;
+
+					bullet = new Rectangle();
+					bullet.height = 0;
+					bullet.width = 0;
+
+					XY = new Rectangle();
+					XY.x = player.x;
+					_Anamy.dispose();
+					Ship.dispose();
+					scFont.dispose();
+					forest.dispose();
+					Tgrass.dispose();
+					UpButton.dispose();
+					LeftButton.dispose();
+					RightButton.dispose();
+					Player.dispose();
+					backMusic.dispose();
+					// вот тут заново все рисовать и параметры настроить!!
+				}
 			}
 		}
 
