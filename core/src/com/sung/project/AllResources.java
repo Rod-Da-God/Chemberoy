@@ -1,10 +1,8 @@
 package com.sung.project;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,6 +15,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class AllResources extends Main implements Screen {
+
+
+
 
 
     @Override
@@ -41,8 +42,9 @@ public class AllResources extends Main implements Screen {
         RightButton = new Texture("right.png");
         UpButton = new Texture("up.png");
         forest = new Texture("Back_forest.jpg");
+        fireBall = new Texture("fireball.png");
 
-        _Anamy = new Texture("enamy.png");
+        _enemy = new Texture("enamy.png");
         _Attack = new Texture("attack.png");
         Ban = new Texture("ban1.jpg");
         Bull = new Texture("bull.png");
@@ -53,6 +55,7 @@ public class AllResources extends Main implements Screen {
         flower = new Texture("flower.png");
         Bo$$ = new Texture("Boss.png");
         Speed = new Texture("speed.png");
+        bomb = new Texture("bomb.png");
 
 
 
@@ -60,6 +63,10 @@ public class AllResources extends Main implements Screen {
         scFont.setColor(color);
         sFont.getData().setScale(1.2f);
         sFont.setColor(color);
+
+        rectBulletl = new Array<Rectangle>();
+        rectBulletl2 = new Array<Rectangle>();
+
 
 
         sprite = new Sprite(flower,10,40,120,150);
@@ -71,15 +78,9 @@ public class AllResources extends Main implements Screen {
         backMusic.setLooping(true);
         backMusic.setVolume(0.3f);
         backMusic.play();
-        MhitSound = Gdx.audio.newSound(Gdx.files.internal("hit.wav"));
 
 
-        flowers = Gdx.audio.newSound(Gdx.files.internal("flowers.mp3"));
-        flowers.loop(0.001f);
 
-        cyber = Gdx.audio.newMusic(Gdx.files.internal("Cyber.mp3"));
-        cyber.setLooping(true);
-        cyber.setVolume(0.3f);
 
         //MhitSound.loop(0.01f);
 
@@ -89,6 +90,10 @@ public class AllResources extends Main implements Screen {
         grass.y = -26;
         grass.height = 70;
         grass.width = 250;
+
+        logoBomb = new Rectangle(8000,480,64,64);
+
+        logoBomb2 = new Rectangle(6546,5646,0,0);
 
 
         gears = new Rectangle();
@@ -128,8 +133,8 @@ public class AllResources extends Main implements Screen {
         ship.set(-20,10,200,100);
 
 
-        _anamy = new Rectangle();
-        _anamy.set(650,80,95,60);
+        enemy = new Rectangle();
+        enemy.set(650,80,95,60);
         playerHealth = String.valueOf(healthNow);
         gearStatus = String.valueOf(gear);
         anamyHealth = String.valueOf(anamyHealthNow);
@@ -154,8 +159,8 @@ public class AllResources extends Main implements Screen {
         Tgrass2 = new Rectangle();
         Tgrass2.set(330,-50,500,180);
 
-        _anamy2 = new Rectangle();
-        _anamy2.set(610,80,95,80);
+        enemy2 = new Rectangle();
+        enemy2.set(610,80,95,80);
 
 
         Forest = new Rectangle();
@@ -170,14 +175,16 @@ public class AllResources extends Main implements Screen {
 
 
         boss = new Rectangle();
-        boss.set(-561,-250,125,125);
+        boss.set(-561,-250,20,125);
+
+        ledge = new Rectangle(200, 300, 110, 30);
 
 
 
     }
 
     @Override
-    public void render() {
+    public void render( ) {
         super.render();
         Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -189,13 +196,13 @@ public class AllResources extends Main implements Screen {
         Sbatch.draw(Tgrass, grass.x, grass.y, grass.width, grass.height);
         Sbatch.draw(Tgrass, grass3.x, grass3.y, grass3.width, grass3.height);
         Sbatch.draw(Tgrass, Tgrass2.x, Tgrass2.y, Tgrass2.width, Tgrass2.height);
-        Sbatch.draw(Tgrass, 200, 300, 110, 30);
+        Sbatch.draw(Tgrass, ledge.x, ledge.y, ledge.width, ledge.height);
         //Sbatch.draw(Ship,ship.x,ship.y,ship.width,ship.height);
 
 
         Sbatch.draw(Player, player.x, player.y, player.width, player.height);
-        Sbatch.draw(_Anamy, _anamy.x, _anamy.y, _anamy.width, _anamy.height);
-        Sbatch.draw(_Anamy, _anamy2.x, _anamy2.y, _anamy2.width, _anamy2.height);
+        Sbatch.draw(_enemy, enemy.x, enemy.y, enemy.width, enemy.height);
+        Sbatch.draw(_enemy, enemy2.x, enemy2.y, enemy2.width, enemy2.height);
         Sbatch.draw(Bo$$, boss.x, boss.y, boss.width, boss.height);
 
 
@@ -215,13 +222,16 @@ public class AllResources extends Main implements Screen {
         // Sbatch.draw(_Anamy, 90, 440, 40, 40);
         Sbatch.draw(Gears, gears.x, gears.y, gears.width, gears.height);
         Sbatch.draw(Speed, speed.x, speed.y, speed.width, speed.height);
+        Sbatch.draw(bomb, logoBomb.x, logoBomb.y, logoBomb.width, logoBomb.height);
         Sbatch.draw(Gears2, gears2.x, gears2.y, gears.width, gears.height);
+        Sbatch.draw(bomb,logoBomb2.x,logoBomb2.y,logoBomb2.width,logoBomb2.height);
 
 
         Sbatch.draw(Aid, aid.x, aid.y, aid.width, aid.height);
         sprite.draw(Sbatch);
 
         {
+
             cleanMap();
             sdad();
             Grass();
@@ -234,6 +244,17 @@ public class AllResources extends Main implements Screen {
             invisible();
             invisible2();
             speedBuster();
+            bomb();
+            bombIteratorPlayer();
+            asa();
+            enemyBullet();
+        }
+        for (Rectangle Bomb : rectBulletl) {
+            Sbatch.draw(bomb, Bomb.x, Bomb.y);
+        }
+
+        for (Rectangle Bomb : rectBulletl2) {
+            Sbatch.draw(fireBall, Bomb.x, Bomb.y);
         }
 
 
@@ -274,6 +295,7 @@ public class AllResources extends Main implements Screen {
 
             }
         }
+
 
 
 

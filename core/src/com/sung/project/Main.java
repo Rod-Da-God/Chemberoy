@@ -2,13 +2,12 @@ package com.sung.project;
 
 //вообще весь класс перенести в другой , этот должен быть пустым или под уровни
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,16 +16,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.sung.project.Player;
+import com.badlogic.gdx.utils.TimeUtils;
 
-public class Main extends ApplicationAdapter implements Screen {
+import java.util.Iterator;
+
+public class Main extends Game implements Screen {
+    MainMenuScreen menuScreen;
     OrthographicCamera Ocamera;
     SpriteBatch Sbatch;
     BitmapFont scFont;
     BitmapFont sFont;
     Color color;
     boolean checker = false;
-    boolean checkerBull;
+    boolean checkerBull = true;
+
+    long lastDropTime;
+    long lastDropTime2;
+    Main main;
 
 
     Texture img;
@@ -39,7 +45,7 @@ public class Main extends ApplicationAdapter implements Screen {
     Texture UpButton;
     Texture forest;
     Texture Ship;
-    Texture _Anamy;
+    Texture _enemy;
     Texture _Attack;
     Texture Ban;
     Texture Bull;
@@ -50,6 +56,8 @@ public class Main extends ApplicationAdapter implements Screen {
     Texture Speed;
     Texture Gears;
     Texture Gears2;
+    Texture bomb;
+    Texture fireBall;
 
     Sound bitSound;
     Sound MhitSound;
@@ -65,7 +73,7 @@ public class Main extends ApplicationAdapter implements Screen {
     Rectangle right;
     Rectangle up;
     Rectangle ship;
-    Rectangle _anamy;
+    Rectangle enemy;
     Rectangle _attack;
     Rectangle bullet;
     Rectangle ban;
@@ -75,7 +83,7 @@ public class Main extends ApplicationAdapter implements Screen {
     Thread thread2 = new Thread();
     Rectangle XY;
     Rectangle Tgrass2;
-    Rectangle _anamy2;
+    Rectangle enemy2;
     Rectangle Forest;
     Rectangle Hills;
     Rectangle aid;
@@ -85,16 +93,24 @@ public class Main extends ApplicationAdapter implements Screen {
     Rectangle grass3;
     Rectangle gears;
     Rectangle gears2;
+    Array <Rectangle> rectBulletl;
+    Array <Rectangle> rectBulletl2;
+    Rectangle logoBomb;
+    Rectangle logoBomb2;
+    Rectangle Bomb;
+    Rectangle Bomb2;
+    Rectangle ledge;
 
 
     public String playerHealth;
     public String gearStatus;
     public int healthShip = 30;
-    public int healthNow = 1000;
+    public int healthNow = 250;
     public String anamyHealth;
     public int anamyHealthNow = 20;
     public int anamyHealthNow2 = 20;
     public int gear = 0;
+    public int bossHP = 15;
 
     @Override
     public void create() {
@@ -109,12 +125,16 @@ public class Main extends ApplicationAdapter implements Screen {
     }
 
     void Grass() {
+
         if (!checker) {
             if (player.y < 33) {
                 player.y = 33;
 
-            } else player.y -= 50 * Gdx.graphics.getDeltaTime();
+            }// else player.y -= 50 * Gdx.graphics.getDeltaTime();
             //кусок земли по середнине работает не правильно, переделать
+            if (player.y > 33){
+                player.y -= 50 * Gdx.graphics.getDeltaTime();
+            }
 
             if (player.y < 30 + (-grass.y * 2) && player.x >= 180 && player.x <= 290) {
                 player.y = 50;
@@ -143,35 +163,35 @@ public class Main extends ApplicationAdapter implements Screen {
 
 
 //kustik zombie
-            if (_anamy.y < 30 + (-grass.y * 2) && _anamy.x >= 290 && _anamy.x <= 310) {
+            if (enemy.y < 30 + (-grass.y * 2) && enemy.x >= 290 && enemy.x <= 310) {
 
-                _anamy.y = (-grass.y * 2)
+                enemy.y = (-grass.y * 2)
                         + 5;
             }
 
-            if (_anamy2.y < 30 + (-grass.y * 2) && _anamy2.x >= 290 && _anamy2.x <= 310) {
+            if (enemy2.y < 30 + (-grass.y * 2) && enemy2.x >= 290 && enemy2.x <= 310) {
 
-                _anamy2.y = (-grass.y * 2) + 5;
+                enemy2.y = (-grass.y * 2) + 5;
             }
 
 
-            if (_anamy.y < 30 + (-grass.y * 2) && _anamy.x >= 310 && _anamy.x <= 320) {
+            if (enemy.y < 30 + (-grass.y * 2) && enemy.x >= 310 && enemy.x <= 320) {
 
-                _anamy.y = (-grass.y * 2) + 15;
+                enemy.y = (-grass.y * 2) + 15;
             }
-            if (_anamy2.y < 30 + (-grass.y * 2) && _anamy2.x >= 310 && _anamy2.x <= 320) {
+            if (enemy2.y < 30 + (-grass.y * 2) && enemy2.x >= 310 && enemy2.x <= 320) {
 
-                _anamy2.y = (-grass.y * 2) + 15;
+                enemy2.y = (-grass.y * 2) + 15;
             }
 
 
-            if (_anamy.y < 30 + (-grass.y * 2) && _anamy.x >= 320 && _anamy.x <= 330) {
+            if (enemy.y < 30 + (-grass.y * 2) && enemy.x >= 320 && enemy.x <= 330) {
 
-                _anamy.y = (-grass.y * 2) + 35;
+                enemy.y = (-grass.y * 2) + 35;
             }
-            if (_anamy2.y < 30 + (-grass.y * 2) && _anamy2.x >= 320 && _anamy2.x <= 330) {
+            if (enemy2.y < 30 + (-grass.y * 2) && enemy2.x >= 320 && enemy2.x <= 330) {
 
-                _anamy2.y = (-grass.y * 2) + 35;
+                enemy2.y = (-grass.y * 2) + 35;
             }
 
 
@@ -186,6 +206,7 @@ public class Main extends ApplicationAdapter implements Screen {
             }
 
         }
+
     }
 
 
@@ -215,6 +236,9 @@ public class Main extends ApplicationAdapter implements Screen {
 
             if (player.x > 770) {
                 player.x = 770;
+            }
+            if (boss.x > 770) {
+                boss.x = 770;
             }
             {
                 Tgrass2();
@@ -261,9 +285,35 @@ public class Main extends ApplicationAdapter implements Screen {
             gear = gear + 1;
             gearStatus = String.valueOf(gear);
         }
-    }
 
+        if (healthNow <= 1004){
+            //main.setScreen(new MenuScreen(this));
+           // setScreen( new MenuScreen(this));
+        }
+    }
     void enemy(){
+
+
+
+        if (enemy.x > 770){
+            enemy.x = 770;
+        }
+
+        if (enemy.x <600 )
+            enemy.x = 600;
+
+        if (player.y <= enemy.y + 10) {
+            if (player.x >= enemy.x - 85) {
+
+                enemy.x -= 60 * Gdx.graphics.getDeltaTime();
+            }
+
+            if (player.x >= enemy.x) {
+                if (enemy.x <= player.x) {
+                    enemy.x += 60 * Gdx.graphics.getDeltaTime();
+                }
+            }
+        }
 
     }
 
@@ -282,13 +332,13 @@ public class Main extends ApplicationAdapter implements Screen {
         }
 
 
-        if (player.y <= boss.y + 90) {
+        if (player.y <= boss.y + 250) {
             if (player.x >= boss.x ) {
 
                 boss.x += 170 * Gdx.graphics.getDeltaTime();
             }
 
-            if (player.x <= boss.x) {
+            if (player.x - 100 <= boss.x) {
                 if (boss.x >= player.x) {
                     boss.x -= 140 * Gdx.graphics.getDeltaTime();
                 }
@@ -301,7 +351,7 @@ public class Main extends ApplicationAdapter implements Screen {
 
 
     void Overlaps() {
-        if (_anamy.overlaps(player)) {
+        if (enemy.overlaps(player)) {
             healthNow -= (0.1 - 0.01);
             playerHealth = String.valueOf(healthNow);
             player.x -= 2;
@@ -317,23 +367,9 @@ public class Main extends ApplicationAdapter implements Screen {
         }
 
 
-        if (player.overlaps(fl)) {
-
-            for (int j = 0; j < 4; j++) {
-
-                if (j >= 3) {
-
-                    flowers.play(0.3f, 2.2f, 0);
-
-                }
-
-            }
-
-            //flowers.play(0.3f, 2f, 0);
-        }//else flowers.stop();
 
 
-        if (_anamy2.overlaps(player)) {
+        if (enemy2.overlaps(player)) {
             healthNow -= (0.1 - 0.01);
             playerHealth = String.valueOf(healthNow);
             player.x -= 2;
@@ -342,76 +378,94 @@ public class Main extends ApplicationAdapter implements Screen {
         }
 
 
-        if (bullet.overlaps(_anamy)) {
-            _anamy.setPosition(_anamy.x + 10, _anamy.y);
+        if (bullet.overlaps(enemy)) {
+            enemy.setPosition(enemy.x + 10, enemy.y);
             anamyHealthNow -= 1;
             anamyHealth = String.valueOf(anamyHealthNow);
             bullet.x = player.x - 100;
             bullet.y = player.y + 10;
             if (anamyHealthNow <= 0) {
-                _anamy.x = 0;
-                _anamy.y = 148000;
+                enemy.x = 0;
+                enemy.y = 148000;
             }
         }
 
 
-        if (bullet.overlaps(_anamy2)) {
-            _anamy2.setPosition(_anamy2.x + 10, _anamy2.y);
+        if (bullet.overlaps(enemy2)) {
+            enemy2.setPosition(enemy2.x + 10, enemy2.y);
             anamyHealthNow2 -= 1;
             anamyHealth = String.valueOf(anamyHealthNow);
             bullet.x = player.x + 10;
             bullet.y = player.y + 10;
             if (anamyHealthNow2 <= 0) {
-                _anamy2.x = 0;
-                _anamy2.y = 148000;
+                enemy2.x = 0;
+                enemy2.y = 148000;
             }
             if (anamyHealthNow2 == 1) {
 
-                gears2.set(_anamy2.x, _anamy2.y, gears.width, gears.height);
+                gears2.set(enemy2.x, enemy2.y, gears.width, gears.height);
             }
         }
 
 
-        if (healthNow < 950) {
+        if (healthNow < 200) {
             if (player.overlaps(aid)) {
                 aid.setPosition(1080, 1080);
                 healthNow = healthNow + 50;
                 playerHealth = String.valueOf(healthNow);
             }
         }
+
+        if (boss.overlaps(player)){
+            healthNow = healthNow -1;
+            playerHealth = String.valueOf(healthNow);
+        }
+
+
+        if (healthNow <= 0){
+Gdx.app.exit();
+        }
+
+        if (player.overlaps(logoBomb2)) {
+
+            logoBomb.set(710,430,45,45);
+            logoBomb2.set(54646,1651,0,0);
+        }
+
+
     }
 
 
     void agroZombie() {
         if (!checker) {
 
-            if (player.y <= _anamy.y + 90) {
-                if (player.x >= _anamy.x - 150) {
+            if (player.y <= enemy.y + 90) {
+                if (player.x >= enemy.x - 150) {
 
-                    _anamy.x -= 140 * Gdx.graphics.getDeltaTime();
+                    enemy.x -= 140 * Gdx.graphics.getDeltaTime();
                 }
 
-                if (player.x >= _anamy.x) {
-                    if (_anamy.x <= player.x) {
-                        _anamy.x += 120 * Gdx.graphics.getDeltaTime();
+                if (player.x >= enemy.x) {
+                    if (enemy.x <= player.x) {
+                        enemy.x += 120 * Gdx.graphics.getDeltaTime();
                     }
                 }
             }
 
 
 //vtoroy zombik
-            if (player.y <= _anamy2.y + 90) {
-                if (player.x >= _anamy2.x - 150) {
+            if (player.y <= enemy2.y + 90) {
+                if (player.x >= enemy2.x - 150) {
 
-                    _anamy2.x -= 120 * Gdx.graphics.getDeltaTime();
+                    enemy2.x -= 120 * Gdx.graphics.getDeltaTime();
                 }
 
                 // if (player.x <= _anamy2.x + 150) {
                 //while (_anamy2.x <= player.x) {
                 //   _anamy2.x += 0.001;
-                if (player.x >= _anamy2.x) {
-                    if (_anamy2.x <= player.x) {
-                        _anamy2.x += 120 * Gdx.graphics.getDeltaTime();
+                if (player.x >= enemy2.x) {
+                    if (enemy2.x <= player.x) {
+                        enemy2.x += 120 * Gdx.graphics.getDeltaTime();
                         //}
                         // }
                     }
@@ -430,13 +484,13 @@ public class Main extends ApplicationAdapter implements Screen {
 
     void invisible2() {
         if (!checker) {
-            if (this._anamy2.x <= 0) {
-                _anamy2.x = 0;
+            if (this.enemy2.x <= 0) {
+                enemy2.x = 0;
 
             }
 
-            if (_anamy2.x >= 800 - 64) {
-                _anamy2.x = 800 - 64;
+            if (enemy2.x >= 800 - 64) {
+                enemy2.x = 800 - 64;
 
             }
         }
@@ -445,13 +499,13 @@ public class Main extends ApplicationAdapter implements Screen {
 
     void invisible() {
         if (!checker) {
-            if (this._anamy.x <= 0) {
-                _anamy.x = 0;
+            if (this.enemy.x <= 0) {
+                enemy.x = 0;
 
             }
 
-            if (_anamy.x >= 800 - 64) {
-                _anamy.x = 800 - 64;
+            if (enemy.x >= 800 - 64) {
+                enemy.x = 800 - 64;
 
             }
         }
@@ -477,28 +531,28 @@ public class Main extends ApplicationAdapter implements Screen {
 
     void anamyWalk() {
         if (!checker) {
-            if (_anamy.y < 23) {
-                _anamy.y = 23;
+            if (enemy.y < 23) {
+                enemy.y = 23;
 
-            } else _anamy.y -= 50 * Gdx.graphics.getDeltaTime();
+            } else enemy.y -= 50 * Gdx.graphics.getDeltaTime();
 
-            if (_anamy.y < 30 + (-grass.y * 2) && _anamy.x >= 160 && _anamy.x <= 290) {
-                _anamy.y = 40;
-            } else _anamy.y -= 50 * Gdx.graphics.getDeltaTime();
+            if (enemy.y < 30 + (-grass.y * 2) && enemy.x >= 160 && enemy.x <= 290) {
+                enemy.y = 40;
+            } else enemy.y -= 50 * Gdx.graphics.getDeltaTime();
 
-            if (_anamy.y < 30 + (-grass.y * 2) && _anamy.x >= 330) {
-                _anamy.y = 30 + (-grass.y * 2);
+            if (enemy.y < 30 + (-grass.y * 2) && enemy.x >= 330) {
+                enemy.y = 30 + (-grass.y * 2);
             }
-            if (_anamy.x >= 650 || _anamy.x <= 650) {
-                if (_anamy.x >= 650) {
-                    _anamy.x -= 10 * Gdx.graphics.getDeltaTime();
+            if (enemy.x >= 650 || enemy.x <= 650) {
+                if (enemy.x >= 650) {
+                    enemy.x -= 10 * Gdx.graphics.getDeltaTime();
                 }
-                if (_anamy.x <= 650) {
-                    _anamy.x += 30 * Gdx.graphics.getDeltaTime();
+                if (enemy.x <= 650) {
+                    enemy.x += 30 * Gdx.graphics.getDeltaTime();
                 }
 
             } else {
-                _anamy.x = 650;
+                enemy.x = 650;
 
 
             }
@@ -508,28 +562,28 @@ public class Main extends ApplicationAdapter implements Screen {
 
     void anamy2Walk() {
         if (!checker) {
-            if (_anamy2.y < 20) {
-                _anamy2.y = 20;
+            if (enemy2.y < 20) {
+                enemy2.y = 20;
 
-            } else _anamy2.y -= 50 * Gdx.graphics.getDeltaTime();
+            } else enemy2.y -= 50 * Gdx.graphics.getDeltaTime();
 
-            if (_anamy2.y < 30 + (-grass.y * 2) && _anamy2.x >= 160 && _anamy2.x <= 290) {
-                _anamy2.y = 30;
-            } else _anamy2.y -= 50 * Gdx.graphics.getDeltaTime();
+            if (enemy2.y < 30 + (-grass.y * 2) && enemy2.x >= 160 && enemy2.x <= 290) {
+                enemy2.y = 30;
+            } else enemy2.y -= 50 * Gdx.graphics.getDeltaTime();
 
-            if (_anamy2.y < 30 + (-grass.y * 2) && _anamy2.x >= 330) {
-                _anamy2.y = 30 + (-grass.y * 2);
+            if (enemy2.y < 30 + (-grass.y * 2) && enemy2.x >= 330) {
+                enemy2.y = 30 + (-grass.y * 2);
             }
-            if (_anamy2.x >= 610 || _anamy2.x <= 610) {
-                if (_anamy2.x >= 610) {
-                    _anamy2.x -= 10 * Gdx.graphics.getDeltaTime();
+            if (enemy2.x >= 610 || enemy2.x <= 610) {
+                if (enemy2.x >= 610) {
+                    enemy2.x -= 10 * Gdx.graphics.getDeltaTime();
                 }
-                if (_anamy2.x <= 610) {
-                    _anamy2.x += 30 * Gdx.graphics.getDeltaTime();
+                if (enemy2.x <= 610) {
+                    enemy2.x += 30 * Gdx.graphics.getDeltaTime();
                 }
 
             } else {
-                _anamy2.x = 610;
+                enemy2.x = 610;
 
             }
         }
@@ -563,7 +617,7 @@ public class Main extends ApplicationAdapter implements Screen {
 
 
                 Sbatch.draw(Bull, player.x + 50, bullet.y);
-                if (bullet.overlaps(_anamy)) {
+                if (bullet.overlaps(enemy)) {
                     XY.x = -546;
                 } else {
                     bullet.x = player.x + 50;
@@ -603,6 +657,124 @@ public class Main extends ApplicationAdapter implements Screen {
         }
     }
 
+
+
+    void bomb() {
+
+        if (Gdx.input.isTouched()) {
+            vector3.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            Ocamera.unproject(vector3);
+            float touchX = vector3.x;
+            float touchY = vector3.y;
+            if ((touchX >= logoBomb.getX()) && touchX <= (logoBomb.getX() + logoBomb.getWidth()) && (touchY >= logoBomb.getY()) && touchY <= (logoBomb.getY() + logoBomb.getHeight())) {
+                if (TimeUtils.nanoTime() - lastDropTime > 1000000000) {
+                    spawnBomb();
+                }
+            }
+        }
+    }
+
+
+void spawnBomb(){
+Bomb = new Rectangle(player.x,player.y,10,10);
+rectBulletl.add(Bomb);
+    lastDropTime = TimeUtils.nanoTime();
+
+
+}
+
+
+
+    void spawnEnemyBomb(){
+        if( checkerBull = true) {
+            Bomb = new Rectangle(boss.x + 135, boss.y, 25, 15);
+            rectBulletl2.add(Bomb);
+            lastDropTime2 = TimeUtils.nanoTime();
+
+        }
+    }
+
+    void asa(){
+        if (boss.x> player.x + 20 || boss.x < player.x - 20) {
+          if (bossHP >= 6) {
+              if (TimeUtils.nanoTime() - lastDropTime2 > (1000000000 * 2)) {
+                  spawnEnemyBomb();
+              }
+          }
+          if (bossHP <= 6){
+                if (TimeUtils.nanoTime() - lastDropTime2 > (1000000000)) {
+                    spawnEnemyBomb();
+                }
+            }
+        }
+    }
+
+
+
+    void enemyBullet() {
+        Iterator<Rectangle> iterator = rectBulletl2.iterator();
+
+        while (iterator.hasNext()) {
+            Rectangle bull = iterator.next();
+if (bossHP >= 6) {
+    bull.y += 200 * Gdx.graphics.getDeltaTime();
+}else bull.y += 300 * Gdx.graphics.getDeltaTime();
+
+            if (bull.y  > 480) iterator.remove();
+
+            if (bull.overlaps(player)){
+                healthNow = healthNow - 20;
+                iterator.remove();
+                playerHealth = String.valueOf(healthNow);
+            }
+
+            if (bossHP <= 0) {
+                iterator.remove();
+
+            }
+
+            //if(bullet.y + 64 < 18) iterator.remove();
+
+                // playerHealth = String.valueOf(healthNow);
+
+                }
+            }
+
+
+
+
+
+void bombIteratorPlayer() {
+    Iterator<Rectangle> iter = rectBulletl.iterator();
+
+    while (iter.hasNext()) {
+        Rectangle Bomb = iter.next();
+
+        Bomb.y -= 200 * Gdx.graphics.getDeltaTime();
+
+        if (Bomb.y  < 30) iter.remove();
+
+
+        if (Bomb.overlaps(boss)) {
+            bossHP --;
+            iter.remove();
+
+            if (bossHP <= 0) {
+                boss.set(-1564,-65165,0,0);
+
+            }
+
+            if (bossHP <= 1) {
+                gears2.x = (boss.x);
+                gear = gear + 1;
+                gearStatus = String.valueOf(gear);
+            }
+        }
+    }
+}
+
+
+
     void cleanMap() {
         if (anamyHealthNow <= 0 && anamyHealthNow2 <= 0) {
 
@@ -614,6 +786,9 @@ public class Main extends ApplicationAdapter implements Screen {
                 grass.y = -161;
                 grass.height = 0;
                 grass.width = 0;
+
+
+                ledge.set(-156,-161,0,0);
 
 
                 player.x = 0;
@@ -628,8 +803,8 @@ public class Main extends ApplicationAdapter implements Screen {
                 ship.height = 0;
 
 
-                _anamy.x = -65161;
-                _anamy.y = -165156;
+                enemy.x = -65161;
+                enemy.y = -165156;
                 playerHealth = String.valueOf(healthNow);
 
 
@@ -649,10 +824,10 @@ public class Main extends ApplicationAdapter implements Screen {
                 Tgrass2.width = 0;
 
 
-                _anamy2.x = -1566;
-                _anamy2.y = -15416;
-                _anamy2.width = 0;
-                _anamy2.height = 0;
+                enemy2.x = -1566;
+                enemy2.y = -15416;
+                enemy2.width = 0;
+                enemy2.height = 0;
 
                 Forest.x = -800;
                 Forest.y = -800;
@@ -688,7 +863,7 @@ public class Main extends ApplicationAdapter implements Screen {
         player.set(50, 10, 40, 50);
 
 
-        boss.set(250, 250, 420, 100);
+        boss.set(250, 250, 320, 100);
 
 
         grass.set(-50, -12, 900, 45);
@@ -699,7 +874,8 @@ public class Main extends ApplicationAdapter implements Screen {
 
         Tgrass2.set(-40, 350, 250, 30);
 
-        _anamy.set(729,365,50,50);
+        enemy.set(729,365,60,60);
+        anamyHealthNow = 20;
 
         grass3.set(600,350,250,30);
 
@@ -707,11 +883,8 @@ public class Main extends ApplicationAdapter implements Screen {
 
 
         speed.set(750, 430, 45, 45);
-
-
-
-
-        ;
+        logoBomb2.set(70,370,45,45) ;
+        bullet.setSize(25,25);
 
 
 
@@ -744,7 +917,7 @@ public class Main extends ApplicationAdapter implements Screen {
     public void dispose() {
         Sbatch.dispose();
         img.dispose();
-        _Anamy.dispose();
+        _enemy.dispose();
         Ship.dispose();
         scFont.dispose();
         forest.dispose();
